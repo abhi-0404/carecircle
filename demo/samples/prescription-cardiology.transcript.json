@@ -1,0 +1,37 @@
+{
+  "lines": [
+    {
+      "verbatim": "Tab. Amlodipine 5mg 1-0-1 x 30 days after food",
+      "name": "Amlodipine",
+      "strength": "5mg",
+      "form": "tablet",
+      "dose": "1-0-1",
+      "duration": "30 days",
+      "timing": "after food"
+    },
+    {
+      "verbatim": "Tab. Metformin 500 mg BD with meals",
+      "name": "Metformin",
+      "strength": "500 mg",
+      "form": "tablet",
+      "dose": "BD",
+      "timing": "with meals"
+    },
+    {
+      "verbatim": "Tab. Atorvastatin 10mg 0-0-1 x 30 days",
+      "name": "Atorvastatin",
+      "strength": "10mg",
+      "form": "tablet",
+      "dose": "0-0-1",
+      "duration": "30 days"
+    },
+    {
+      "verbatim": "Tab. Paracetamol 650 mg SOS for fever",
+      "name": "Paracetamol",
+      "strength": "650 mg",
+      "form": "tablet",
+      "dose": "SOS",
+      "timing": "for fever"
+    }
+  ]
+}

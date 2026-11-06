@@ -1,0 +1,12 @@
+{
+  "parent": "Ma",
+  "members": {
+    "priya": ["Priya"],
+    "rahul": ["Rahul"],
+    "ankit": ["Ankit"]
+  },
+  "approval": {
+    "people_only": true,
+    "not_own_entry": true
+  }
+}
