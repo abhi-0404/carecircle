@@ -65,10 +65,13 @@ _SPLIT = re.compile(r"\bsplit\s+(.+)$", re.IGNORECASE)
 _SHARE = re.compile(r"^([a-z][\w-]*)(?::(\d+))?$", re.IGNORECASE)
 
 
-def _strip_mentions(text: str) -> str:
+def strip_mentions(text: str) -> str:
     """Drop the leading '@ledger', keep '@ankit' later on as plain 'ankit'."""
     text = _LEADING_MENTIONS.sub("", text)
     return _INLINE_AT.sub(r"\1", text).strip(" ,:\n\t")
+
+
+_strip_mentions = strip_mentions
 
 
 def _parse_shares(text: str) -> dict[str, int] | None:

@@ -132,6 +132,11 @@ class SwitchAgent:
         r = await self.http.post(f"/agent-sessions/{session_id}/approvals", json=body)
         return _check(r, "open approval")
 
+    async def close_approval(self, session_id: str, request_id: str) -> None:
+        """Withdraw a card nobody needs to answer any more."""
+        r = await self.http.post(f"/agent-sessions/{session_id}/approvals/{request_id}/close")
+        _check(r, "close approval")
+
     async def approval_outcomes(self) -> list[dict]:
         """Answers and expiries not yet acknowledged, oldest first."""
         r = await self.http.get("/agent-sessions/approvals/outcomes")

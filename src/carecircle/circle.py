@@ -31,6 +31,12 @@ class Circle:
     people_only: bool = True  # only a recognised family member's tap counts
     not_own_entry: bool = False  # nobody approves their own expense; payments are
     #                              confirmed by the person who received the money
+    parent_handles: tuple[str, ...] = ()  # the parent's chat names (may answer "Taken?")
+    parent_room: str | None = None  # name of the parent's room, if not found by link
+    reader_agents: tuple[str, ...] = ("meds",)  # agents whose transcripts @pillbox accepts
+    planner_agents: tuple[str, ...] = ("coordinator",)  # agents whose visits @pillbox accepts
+    reminders: bool = True
+    reminder_timeout_minutes: int = 30
 
     @classmethod
     def from_dict(cls, d: dict) -> "Circle":
@@ -39,12 +45,27 @@ class Circle:
             for name, aliases in d["members"].items()
         }
         rules = d.get("approval", {})
+        rem = d.get("reminders", {})
         return cls(
             parent=d.get("parent", "Ma"),
             members=members,
             people_only=bool(rules.get("people_only", True)),
             not_own_entry=bool(rules.get("not_own_entry", False)),
+            parent_handles=tuple(h.casefold() for h in d.get("parent_handles", [])),
+            parent_room=d.get("parent_room"),
+            reader_agents=tuple(a.lower() for a in d.get("reader_agents", ["meds"])),
+            planner_agents=tuple(a.lower() for a in d.get("planner_agents", ["coordinator"])),
+            reminders=bool(rem.get("enabled", True)),
+            reminder_timeout_minutes=int(rem.get("timeout_minutes", 30)),
         )
+
+    def is_parent(self, *candidates: str | None) -> bool:
+        keys = set()
+        for c in candidates:
+            if c:
+                c = c.casefold().strip()
+                keys |= {c, chat_name(c) if c.startswith("@") else c}
+        return bool(keys & set(self.parent_handles))
 
     @classmethod
     def load(cls, path: Path) -> "Circle":

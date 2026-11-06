@@ -10,6 +10,7 @@ dependencies = [
 ]
 
 [project.scripts]
+carecircle = "carecircle.service:main"
 carecircle-ledger = "carecircle.ledger_agent:main"
 
 [dependency-groups]

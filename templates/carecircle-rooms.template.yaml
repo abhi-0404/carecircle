@@ -32,8 +32,13 @@ params:
   ledger:
     type: agent
     label: Expense keeper
-    description: The @ledger agent you registered (uv run carecircle-ledger register).
+    description: The @ledger agent you registered (uv run carecircle register ledger).
     default: [ledger]
+  pillbox:
+    type: agent
+    label: Medicine keeper
+    description: The @pillbox agent you registered (uv run carecircle register pillbox).
+    default: [pillbox]
 
 group:
   name: "{family} care circle"
@@ -44,8 +49,7 @@ rooms:
     description: Where the siblings and the agents coordinate {parent}'s care.
     bridge: "{bridge}"
     channel_type: channel_public
-    agents: ["{ledger}"]
-    users: ["{$creator}"]
+    agents: ["{ledger}", "{pillbox}"]
     instructions: |
       This is the {family} family's care circle for {parent}. The people here
       are {parent}'s children; they live in different cities and share the work.
@@ -93,7 +97,7 @@ rooms:
     description: "{parent}'s room: today's medicines and the next visit, in large plain text."
     bridge: "{bridge}"
     channel_type: channel_public
-    users: ["{$creator}"]
+    agents: ["{pillbox}"]
     instructions: |
       This room is for {parent}. Keep every message short, warm and in plain
       words: what to take now, and when the next visit is. No jargon, no

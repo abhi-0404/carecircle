@@ -10,11 +10,8 @@ splits and settle-up are plain Python over whole paise.
 
 from __future__ import annotations
 
-import argparse
-import asyncio
 import json
 import logging
-import os
 import sys
 import uuid
 from dataclasses import asdict, dataclass, field
@@ -23,7 +20,6 @@ from typing import Any, Protocol
 
 from carecircle.circle import Circle, chat_name
 from carecircle.commands import HELP, AddExpense, AddPayment, CommandError, Query, parse
-from carecircle.env import load_env, require, set_env_values
 from carecircle.ledger import Expense, Ledger, LedgerError, Payment
 from carecircle.money import format_rupees
 
@@ -117,6 +113,15 @@ class LedgerAgent:
         if room_id not in self.rooms:
             self.rooms[room_id] = RoomState.load(room_id, self.data_dir, self.circle.names)
         return self.rooms[room_id]
+
+    def cursor_of(self, room_id: str) -> int:
+        return self.room(room_id).cursor
+
+    def remember_cursor(self, room_id: str, cursor: int) -> None:
+        state = self.room(room_id)
+        if cursor > state.cursor:
+            state.cursor = cursor
+            state.save()
 
     async def say(self, room_id: str, text: str) -> None:
         await self.switch.send(room_id, text)
@@ -401,108 +406,20 @@ def _find_id(result: Any) -> str | None:
     return None
 
 
-def _room_ids(result: Any) -> list[str]:
-    ids = []
-    for r in _dicts(result):
-        rid = r.get("room_id") or r.get("id")
-        if isinstance(rid, str) and not r.get("archived"):
-            ids.append(rid)
-    return ids
-
-
 # -- running it ---------------------------------------------------------------
-
-async def _serve(agent: LedgerAgent, switch) -> None:
-    from carecircle.switch_client import RoomStream
-
-    streams: dict[str, asyncio.Task] = {}
-
-    async def discover() -> None:
-        while True:
-            try:
-                for rid in _room_ids(await switch.op("list_rooms")):
-                    if rid in streams:
-                        continue
-                    state = agent.room(rid)
-
-                    def remember(cursor: int, state: RoomState = state) -> None:
-                        if cursor > state.cursor:
-                            state.cursor = cursor
-                            state.save()
-
-                    stream = RoomStream(
-                        switch, rid, agent.handle_message, start_from=state.cursor, on_cursor=remember
-                    )
-                    agent.connections[rid] = stream.connection_id
-                    streams[rid] = asyncio.create_task(stream.run())
-                    log.info("listening in room %s", rid)
-            except Exception as exc:  # noqa: BLE001
-                log.warning("could not list rooms: %s", exc)
-            await asyncio.sleep(15)
-
-    async def outcomes() -> None:
-        while True:
-            try:
-                await agent.check_outcomes()
-            except Exception as exc:  # noqa: BLE001
-                log.warning("could not read card outcomes: %s", exc)
-            await asyncio.sleep(2)
-
-    await asyncio.gather(discover(), outcomes())
-
-
-async def _register(args) -> None:
-    from carecircle.switch_client import SwitchAgent
-
-    base = os.environ.get("SWITCH_URL", "http://127.0.0.1:55618")
-    resp = await SwitchAgent.register(
-        base,
-        require("SWITCH_REGISTRATION_KEY"),
-        name=args.name,
-        display_name="Ledger",
-        description="Keeps the family's shared expenses. No AI: every amount is computed by code, "
-        "and nothing is recorded until a sibling approves the card.",
-        overwrite=args.overwrite,
-    )
-    set_env_values(Path(".env"), {"LEDGER_AGENT_ID": resp["id"], "LEDGER_API_KEY": resp["api_key"]})
-    # An agent may not change its own permissions (Switch answers 403), so who
-    # may address @ledger is set by its owner in Switch Console.
-    print(f"Registered @{args.name} (id {resp['id']}). Its key is saved in .env.")
-    print("Next, in Switch Console: Your Agents > ledger > let your family address it,")
-    print("invite it into the family room, then run:  uv run carecircle-ledger run")
-
-
-async def _run() -> None:
-    from carecircle.switch_client import SwitchAgent
-
-    base = os.environ.get("SWITCH_URL", "http://127.0.0.1:55618")
-    switch = SwitchAgent(base, require("LEDGER_AGENT_ID"), require("LEDGER_API_KEY"))
-    circle = Circle.load(Path(os.environ.get("CARECIRCLE_CONFIG", "circle.json")))
-    agent = LedgerAgent(switch, circle, Path(os.environ.get("CARECIRCLE_DATA", "data")))
-    log.info("@ledger is running against %s for %s", base, ", ".join(circle.names))
-    try:
-        await _serve(agent, switch)
-    finally:
-        await switch.aclose()
+# The runner lives in carecircle.service (it runs @ledger and @pillbox together).
 
 
 def main(argv: list[str] | None = None) -> None:
-    if hasattr(sys.stdout, "reconfigure"):
-        sys.stdout.reconfigure(encoding="utf-8")
-        sys.stderr.reconfigure(encoding="utf-8")
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
-    load_env()
-    p = argparse.ArgumentParser(prog="carecircle-ledger")
-    sub = p.add_subparsers(dest="cmd", required=True)
-    reg = sub.add_parser("register", help="register @ledger with the Switch server (once)")
-    reg.add_argument("--name", default="ledger")
-    reg.add_argument("--overwrite", action="store_true", help="re-issue the key if it exists")
-    sub.add_parser("run", help="run @ledger")
-    args = p.parse_args(argv)
-    try:
-        asyncio.run(_register(args) if args.cmd == "register" else _run())
-    except KeyboardInterrupt:
-        pass
+    """Kept so `carecircle-ledger run` still works; same as `carecircle run --only ledger`."""
+    from carecircle.service import main as service_main
+
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if argv[:1] == ["run"]:
+        argv = ["run", "--only", "ledger"]
+    elif argv[:1] == ["register"]:
+        argv = ["register", "ledger"] + [a for a in argv[1:] if a == "--overwrite"]
+    service_main(argv)
 
 
 if __name__ == "__main__":
