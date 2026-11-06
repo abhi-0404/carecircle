@@ -164,7 +164,13 @@ def main(argv: list[str] | None = None) -> None:
     reg.add_argument("--overwrite", action="store_true", help="re-issue the key if it exists")
     run = sub.add_parser("run", help="run the registered agents")
     run.add_argument("--only", nargs="*", default=[], choices=sorted(AGENTS))
+    sub.add_parser("demo", help="play the whole story offline (no Switch, no keys)")
     args = p.parse_args(argv)
+    if args.cmd == "demo":
+        from carecircle.demo import main as demo_main
+
+        demo_main()
+        return
     try:
         asyncio.run(_register(args.name, args.overwrite) if args.cmd == "register" else _run(args.only))
     except KeyboardInterrupt:
