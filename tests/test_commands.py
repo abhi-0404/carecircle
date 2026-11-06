@@ -53,7 +53,8 @@ def test_queries(word, what):
 
 
 @pytest.mark.parametrize("text", ["@ledger hello - show the family how to record an expense.",
-                                  "@ledger hi!", "<@&123> namaste"])
+                                  "@ledger hi!", "<@&123> namaste",
+                                  "Welcome to Ma's care circle! @meds say hello. @pillbox @ledger hello."])
 def test_greeting_gets_help(text):
     assert parse(text) == Query("help")
 

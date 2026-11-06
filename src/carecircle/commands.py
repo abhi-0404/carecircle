@@ -123,4 +123,6 @@ def parse(text: str) -> Command:
         description = re.sub(r"^(for|on)\s+", "", rest.strip(), flags=re.IGNORECASE)
         return AddExpense(amount, description.strip(" ,.") or "Expense", paid_by, shares)
 
+    if re.search(r"\b(hello|hi|hey|namaste|welcome)\b", body, re.IGNORECASE):
+        return Query("help")  # e.g. a room's welcome message that mentions several agents
     raise CommandError("I didn't understand that. Say `help` to see what I can do.")
