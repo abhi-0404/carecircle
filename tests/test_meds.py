@@ -80,6 +80,21 @@ def test_clean_prescription_is_accepted():
     assert any("wasn't read a second time" in f for f in r.flags)
 
 
+@pytest.mark.parametrize("form, verbatim, canon", [
+    ("Tab.", "Tab. X 5mg OD", "tablet"), ("caps", "", "capsule"), ("", "Syp. X 5 ml TDS", "syrup"),
+    (None, "X 5mg OD", "tablet"), ("ointment", "", "ointment"),
+])
+def test_normalize_form(form, verbatim, canon):
+    from carecircle.meds import normalize_form
+    assert normalize_form(form, verbatim) == canon
+
+
+def test_tab_abbreviation_reads_as_tablets():
+    t = {"lines": [{"verbatim": "Tab. Amlodipine 5mg 1-0-1", "name": "Amlodipine", "strength": "5mg",
+                    "form": "Tab.", "dose": "1-0-1"}]}
+    assert check_prescription(t).accepted[0].describe().startswith("Amlodipine 5 mg — 1 tablet morning")
+
+
 def test_hallucinated_name_is_kept_out():
     bad = {"lines": [{"verbatim": "Tab. Amlodipine 5mg 1-0-1", "name": "Atenolol",
                       "strength": "5mg", "dose": "1-0-1"}]}

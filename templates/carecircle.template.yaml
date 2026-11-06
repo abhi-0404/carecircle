@@ -86,8 +86,9 @@ agents:
          the transcript in a ```json block, exactly this shape:
          {"lines": [{"verbatim": "...", "name": "...", "strength": "...",
            "form": "...", "dose": "...", "duration": "...", "timing": "..."}]}
-      4. Then tell the family in one line: "I've copied the prescription; @pillbox
-         is checking it - please review its card."
+      4. Then tell the family in one line, without mentioning anyone: "I've copied
+         the prescription; pillbox is checking it - please review its card."
+         The card can take a minute; don't follow up about it.
 
       Never: add a medicine that isn't on the paper, change or suggest a dose,
       name substitutes, or comment on interactions. If asked a medical

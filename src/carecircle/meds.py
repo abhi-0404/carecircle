@@ -56,6 +56,25 @@ _UNIT_FOR_FORM = {
     "inhaler": ("puff", "puffs"),
 }
 
+_FORM_WORDS = {
+    "tablet": ("tab", "tabs", "tablet", "tablets"),
+    "capsule": ("cap", "caps", "capsule", "capsules"),
+    "syrup": ("syp", "syr", "syrup", "suspension", "susp"),
+    "drops": ("drop", "drops", "gtt"),
+    "inhaler": ("inhaler", "puff", "puffs", "inh"),
+}
+
+
+def normalize_form(form: str | None, verbatim: str = "") -> str:
+    """'Tab.' / 'tabs' -> 'tablet'; unknown -> read the line's first word; else 'tablet'."""
+    for text in (form or "", verbatim.split(" ", 1)[0] if verbatim else ""):
+        word = re.sub(r"[^a-z]", "", text.lower())
+        for canon, words in _FORM_WORDS.items():
+            if word in words:
+                return canon
+    return (form or "tablet").strip().lower() or "tablet"
+
+
 MAX_DOSES_PER_DAY = 4
 NOT_ADVICE = (
     "CareCircle copies what the prescription says; it is not medical advice. "
@@ -233,7 +252,7 @@ def check_prescription(transcript: dict, ocr_text: str | None = None) -> CheckRe
         med = Med(
             name=name.title() if name.islower() else name,
             strength=strength,
-            form=str(line.get("form") or "tablet").lower(),
+            form=normalize_form(line.get("form"), verbatim),
             slots=slots,
             as_needed=as_needed,
             duration_days=parse_duration(line.get("duration") or verbatim),

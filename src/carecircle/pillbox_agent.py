@@ -79,7 +79,10 @@ HELP = """**@pillbox** — I keep {parent}'s medicine list and remind {parent} a
 
 
 def _med_from(d: dict) -> Med:
+    from carecircle.meds import normalize_form
+
     d = {k: v for k, v in d.items() if k in Med.__dataclass_fields__}
+    d["form"] = normalize_form(d.get("form"), d.get("verbatim", ""))
     return Med(**d)
 
 
@@ -187,6 +190,8 @@ class PillboxAgent:
             await self._add_visit(room_id, st, strip_mentions(body), sender_name, sender)
         elif word == "visits":
             await self.say(room_id, self.visits_text(st))
+        elif sender.startswith("@switch-agent-"):
+            return  # another agent mentioned us in passing; answering would start agent chatter
         else:
             await self.say(room_id, HELP.format(parent=self.circle.parent))
 

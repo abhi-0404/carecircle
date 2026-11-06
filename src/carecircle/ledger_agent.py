@@ -132,12 +132,16 @@ class LedgerAgent:
         sender_name = payload.get("sender_name") or ""
         sender = payload.get("sender") or ""
         room = self.room(room_id)
+        from_agent = sender.startswith("@switch-agent-")
         try:
             cmd = parse(body)
         except CommandError as exc:
-            await self.say(room_id, f"🤔 {exc}")
+            if not from_agent:  # agents mentioning us in passing get no reply (no agent chatter)
+                await self.say(room_id, f"🤔 {exc}")
             return
         if isinstance(cmd, Query):
+            if from_agent and cmd.what == "help":
+                return
             await self.say(room_id, self.answer_query(room, cmd.what))
             return
         try:
