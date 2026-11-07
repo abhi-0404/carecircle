@@ -217,3 +217,5 @@ Everything in this repository was written on 6 and 7 November 2026, inside the h
 ---
 
 *Not medical advice. CareCircle copies what doctors write and helps a family share the work; decisions stay with the family and their doctors.*
+
+*The replay page uses the [Inter](https://github.com/rsms/inter) typeface (SIL Open Font License 1.1), self-hosted in `docs/assets/fonts/`; the page loads nothing from other websites.*
