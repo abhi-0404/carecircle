@@ -16,6 +16,22 @@ _PLATFORM_USER = re.compile(
 )
 
 
+def add_member(path: Path, name: str, aliases: list[str]) -> dict[str, list[str]]:
+    """Add a family member, or more chat names for an existing one, in the config file.
+
+    Names match case-insensitively; the file keeps lowercase member keys.
+    """
+    data = json.loads(path.read_text(encoding="utf-8"))
+    members: dict[str, list[str]] = data.setdefault("members", {})
+    key = next((k for k in members if k.lower() == name.lower()), name.lower())
+    have = members.setdefault(key, [])
+    for alias in aliases:
+        if alias.casefold() not in {a.casefold() for a in have}:
+            have.append(alias)
+    path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    return members
+
+
 def chat_name(participant: str) -> str:
     """'@switch-discord-<uuid>-abhishekkumar2672:localhost' -> 'abhishekkumar2672'."""
     local = participant[1:].split(":", 1)[0] if participant.startswith("@") else participant

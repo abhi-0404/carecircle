@@ -87,6 +87,16 @@ def test_settle_up_zeroes_random_ledgers():
         assert set(led.balances().values()) == {0}
 
 
+def test_ensure_members_picks_up_newcomers_and_keeps_history():
+    led = Ledger(SIBS)
+    led.record(led.propose_expense(300000, "Nurse", "priya"), "rahul")
+    assert led.ensure_members(["Priya", "Meera"]) is True  # Meera is new, Priya known
+    assert led.members == SIBS + ["meera"]
+    assert led.ensure_members(["meera"]) is False
+    assert led.balances()["meera"] == 0 and sum(led.balances().values()) == 0
+    led.propose_expense(1000, "Taxi", "meera")  # no longer "not in the circle"
+
+
 def test_unknown_member_rejected():
     led = Ledger(SIBS)
     with pytest.raises(LedgerError, match="not in the circle"):

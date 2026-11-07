@@ -20,7 +20,7 @@ from pathlib import Path
 
 import httpx
 
-from carecircle.admin import _agents, _login
+from carecircle.admin import _agents, _login, machine_online
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -53,6 +53,11 @@ def run(base: str) -> bool:
 
         for name in ("ledger", "pillbox"):
             results.append(_ok(f"@{name} is registered", name in agents))
+        results.append(_ok("Switch Console is connected (it runs @meds, @scribe, @coordinator)", machine_online(http),
+                           "" if machine_online(http) else "open Switch Console"))
+        helpers = [n for n in ("meds", "scribe", "coordinator") if n in agents]
+        results.append(_ok("@meds, @scribe and @coordinator exist", len(helpers) == 3,
+                           "" if len(helpers) == 3 else f"missing: {', '.join(set(('meds', 'scribe', 'coordinator')) - set(helpers))}"))
 
         if family:
             detail = http.get(f"/gateway/rooms/{family['id']}").json()
@@ -91,7 +96,7 @@ def run(base: str) -> bool:
                          if a.get("requestId") not in before and tag in (a.get("title", "") + a.get("detail", ""))]
             results.append(_ok("Switch refuses a stray agent addressing @ledger", refused))
             results.append(_ok("…and no card was opened for it", not new_cards))
-            http.delete(f"/gateway/rooms/{family['id']}/agents/{probe['id']}")
+            http.delete(f"/gateway/agents/{probe['id']}")  # leave no probe agent behind
         else:
             print("SKIP  refusal check (needs a family room, @ledger and SWITCH_REGISTRATION_KEY)")
 

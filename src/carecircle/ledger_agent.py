@@ -112,7 +112,10 @@ class LedgerAgent:
     def room(self, room_id: str) -> RoomState:
         if room_id not in self.rooms:
             self.rooms[room_id] = RoomState.load(room_id, self.data_dir, self.circle.names)
-        return self.rooms[room_id]
+        state = self.rooms[room_id]
+        if state.ledger.ensure_members(self.circle.names):  # the family list grew
+            state.save()
+        return state
 
     def cursor_of(self, room_id: str) -> int:
         return self.room(room_id).cursor

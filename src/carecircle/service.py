@@ -48,10 +48,24 @@ def _room_ids(result) -> list[str]:
     return ids
 
 
-async def serve(name: str, agent, switch) -> None:
+async def serve(name: str, agent, switch, cfg_path: Path | None = None) -> None:
     from carecircle.switch_client import RoomStream
 
     streams: dict[str, asyncio.Task] = {}
+
+    async def watch_config() -> None:
+        """Pick up edits to circle.json (a friend's chat name) without a restart."""
+        last = cfg_path.stat().st_mtime if cfg_path and cfg_path.exists() else None
+        while True:
+            await asyncio.sleep(3)
+            try:
+                now = cfg_path.stat().st_mtime if cfg_path and cfg_path.exists() else None
+                if now != last:
+                    last = now
+                    agent.circle = Circle.load(cfg_path)
+                    log.info("@%s reloaded %s: %s", name, cfg_path.name, ", ".join(agent.circle.names))
+            except Exception as exc:  # noqa: BLE001 - keep the old list if the file is mid-edit
+                log.warning("@%s could not reload %s: %s", name, cfg_path, exc)
 
     async def discover() -> None:
         while True:
@@ -89,18 +103,20 @@ async def serve(name: str, agent, switch) -> None:
             except Exception as exc:  # noqa: BLE001
                 log.warning("@%s clock: %s", name, exc)
 
-    loops = [discover(), outcomes()]
+    loops = [discover(), outcomes(), watch_config()]
     if hasattr(agent, "tick"):
         loops.append(clock())
     await asyncio.gather(*loops)
 
 
+def _config_path() -> Path:
+    cfg = Path(os.environ.get("CARECIRCLE_CONFIG", "circle.json"))
+    return cfg if cfg.exists() else Path("circle.example.json")
+
+
 def _config() -> tuple[str, Circle, Path]:
     base = os.environ.get("SWITCH_URL", "http://127.0.0.1:55618")
-    cfg = Path(os.environ.get("CARECIRCLE_CONFIG", "circle.json"))
-    if not cfg.exists():
-        cfg = Path("circle.example.json")
-    return base, Circle.load(cfg), Path(os.environ.get("CARECIRCLE_DATA", "data"))
+    return base, Circle.load(_config_path()), Path(os.environ.get("CARECIRCLE_DATA", "data"))
 
 
 async def _register(name: str, overwrite: bool) -> None:
@@ -139,7 +155,7 @@ async def _run(only: list[str]) -> None:
             continue
         switch = SwitchAgent(base, aid, key)
         clients.append(switch)
-        jobs.append(serve(name, cls(switch, circle, data), switch))
+        jobs.append(serve(name, cls(switch, circle, data), switch, _config_path()))
         log.info("@%s is running against %s for %s", name, base, ", ".join(circle.names))
     if not jobs:
         raise SystemExit("No agent is registered. Run: uv run carecircle register ledger")
@@ -168,7 +184,44 @@ def main(argv: list[str] | None = None) -> None:
     lk = sub.add_parser("lock", help="let only people and the right agents address @ledger and @pillbox")
     lk.add_argument("--unlock", action="store_true", help="open them to anyone again")
     sub.add_parser("check", help="check CareCircle on the live Switch server")
+    sub.add_parser("who", help="show who has posted in the family room and whether they count")
+    rs = sub.add_parser("reset", help="fresh rooms and AI helpers for a clean take (archives the old rooms)")
+    rs.add_argument("--yes", action="store_true", help="confirm: archive the family's rooms and recreate them")
+    rs.add_argument("--family", default="sharma", help="lowercase family name for the room names")
+    rs.add_argument("--parent", default="Ma")
+    rs.add_argument("--slug", default="ma", help="short lowercase name for the parent's room")
+    rs.add_argument("--siblings", default=None, help='e.g. "Abhishek, Priya, Rahul" (default: from circle.json)')
+    rs.add_argument("--bridge", default=None, help="chat app name in Switch (default: the Discord one)")
+    mb = sub.add_parser("member", help="add a family member, or another chat name for one (no restart needed)")
+    mb.add_argument("name", help="the family member, e.g. priya")
+    mb.add_argument("aliases", nargs="+", help="their chat username(s), as `carecircle who` shows them")
     args = p.parse_args(argv)
+    if args.cmd == "reset":
+        from carecircle.admin import reset
+
+        if not args.yes:
+            raise SystemExit("This archives the family's rooms and recreates them and the 3 AI helpers. "
+                             "Add --yes to go ahead.")
+        circle = Circle.load(_config_path())
+        reset(os.environ.get("SWITCH_URL", "http://127.0.0.1:55618"), family=args.family, parent=args.parent,
+              parent_slug=args.slug, siblings=args.siblings or ", ".join(n.title() for n in circle.names),
+              bridge=args.bridge)
+        return
+    if args.cmd == "member":
+        from carecircle.circle import add_member
+
+        cfg = _config_path()
+        members = add_member(cfg, args.name, args.aliases)
+        print(f"{cfg.name}: " + "; ".join(f"{k} = {', '.join(v) or '(no chat names)'}" for k, v in members.items()))
+        print("Running agents pick this up within a few seconds; no restart needed.")
+        return
+    if args.cmd == "who":
+        from carecircle.admin import who
+
+        require("LEDGER_AGENT_ID")
+        who(os.environ.get("SWITCH_URL", "http://127.0.0.1:55618"), Circle.load(_config_path()),
+            os.environ["LEDGER_AGENT_ID"], os.environ["LEDGER_API_KEY"])
+        return
     if args.cmd == "check":
         from carecircle.check import run as check
 

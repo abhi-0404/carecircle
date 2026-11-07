@@ -91,6 +91,12 @@ class Ledger:
         if len(set(self.members)) != len(self.members) or not self.members:
             raise LedgerError("Members must be a non-empty list of unique names.")
 
+    def ensure_members(self, names: list[str]) -> bool:
+        """Add anyone the family list gained since this ledger was made. True if changed."""
+        added = [n.lower() for n in names if n.lower() not in self.members]
+        self.members += added
+        return bool(added)
+
     # -- changes ---------------------------------------------------------
     def _next_id(self) -> int:
         ids = [e.id for e in self.expenses] + [p.id for p in self.payments]
