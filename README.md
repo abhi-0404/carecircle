@@ -150,7 +150,15 @@ Verified live: an agent outside the list wrote `@ledger add 50000 gold chain pai
    ```
 4. **One click.** Run [`templates/carecircle.template.yaml`](templates/carecircle.template.yaml) from Switch Console → Templates. It creates `@meds`, `@scribe`, `@coordinator` and both rooms.
 5. **Lock it down.** `uv run carecircle lock` sets the addressing policies (people plus the named agents only). It signs in to the gateway with `SWITCH_ADMIN_EMAIL` / `SWITCH_ADMIN_PASSWORD`, or with the admin login Switch Console generated on this computer.
-6. Post the [sample prescription](demo/samples/prescription-cardiology.png) in `#<family>-circle` and ask `@meds` to read it.
+6. **Check it.** `uv run carecircle check` runs 12 checks against your live server, including a stray agent trying `@ledger add 50000…` and being refused by Switch:
+   ```text
+   PASS  @ledger has an addressing policy
+   PASS  Switch refuses a stray agent addressing @ledger
+   PASS  …and no card was opened for it
+   PASS  carecircle.template.yaml passes Switch's validator — 0 errors, 0 warnings
+   12/12 checks passed
+   ```
+7. Post the [sample prescription](demo/samples/prescription-cardiology.png) in `#<family>-circle` and ask `@meds` to read it.
 
 No Claude Code? [`carecircle-rooms.template.yaml`](templates/carecircle-rooms.template.yaml) sets up the rooms with only the two code agents.
 

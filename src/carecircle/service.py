@@ -167,7 +167,12 @@ def main(argv: list[str] | None = None) -> None:
     sub.add_parser("demo", help="play the whole story offline (no Switch, no keys)")
     lk = sub.add_parser("lock", help="let only people and the right agents address @ledger and @pillbox")
     lk.add_argument("--unlock", action="store_true", help="open them to anyone again")
+    sub.add_parser("check", help="check CareCircle on the live Switch server")
     args = p.parse_args(argv)
+    if args.cmd == "check":
+        from carecircle.check import run as check
+
+        raise SystemExit(0 if check(os.environ.get("SWITCH_URL", "http://127.0.0.1:55618")) else 1)
     if args.cmd == "lock":
         from carecircle.admin import lock
 
