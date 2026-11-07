@@ -86,6 +86,8 @@ I'm on Windows 11 with Switch Console 0.40.1 and Switch 0.31.0. In order:
 8. **`{$creator}` in a template needs a linked identity.** If your Switch account isn't linked to your Discord account, a template that puts `{$creator}` in a room is refused. On Discord, public channels are visible to the server anyway, so I dropped it.
 9. **Posting in the wrong channel.** Agents only hear rooms they're members of. Switch tells you plainly: "Meds isn't in this room."
 10. **Agents waking each other.** When `@meds` wrote "@pillbox is checking it", `@pillbox` replied with help text, and `@meds` then asked where the card was. Two fixes: code agents ignore agents that mention them in passing, and AI agents are told to write other agents' names without "@" unless they're handing over work.
+11. **Managed agents need Switch Console to be running.** The Claude Code agents run through a controller that lives inside the Console app. The Switch *server* can be perfectly healthy (it keeps running after Console quits) while creating a template's agents fails with "none of your owner's machines can take it (… is offline)". Open Console, wait about 20 seconds, retry. Check before any step that deletes agents: my own "reset" script now refuses to start unless the machine is online.
+12. **Launching Console from a VS Code terminal.** It exited instantly, with exit code 0 and nothing in the log. VS Code had set `ELECTRON_RUN_AS_NODE=1` in the terminal's environment, which turns any Electron app into plain Node. Open it from the Start menu, or clear the variable first.
 
 ## Try it
 
@@ -93,10 +95,10 @@ I'm on Windows 11 with Switch Console 0.40.1 and Switch 0.31.0. In order:
 git clone https://github.com/abhi-0404/carecircle && cd carecircle
 uv sync
 uv run carecircle demo     # the whole story, offline: no Switch, no Discord, no keys
-uv run pytest              # 137 tests
+uv run pytest              # 140 tests
 ```
 
-With a Switch server running: register the two code agents, run the template, `uv run carecircle lock`, and `uv run carecircle check` (12 live checks, including the refusal above).
+With a Switch server running: register the two code agents, run the template, `uv run carecircle lock`, and `uv run carecircle check` (14 live checks, including the refusal above).
 
 ## Honest limits
 

@@ -66,10 +66,19 @@ Every card is a **native Switch approval card**; on Discord they are real button
 git clone https://github.com/abhi-0404/carecircle && cd carecircle
 uv sync
 uv run carecircle demo     # plays the whole story with the real agent code
-uv run pytest              # 137 tests
+uv run pytest              # 140 tests
 ```
 
 `carecircle demo` runs the real `@ledger` and `@pillbox` code against an in-memory stand-in for Switch, with scripted taps and a recorded `@meds` reading of the [sample prescription](demo/samples/prescription-cardiology.png).
+
+## For judges
+
+| Criterion | Where to look |
+|---|---|
+| **Use of Switch** | [Why Switch is central](#why-switch-is-central-remove-it-and-this-breaks): ten Switch features, each with the file that uses it and what breaks without it |
+| **Technical execution** | `uv run carecircle demo` (offline, 2 s) · `uv run pytest` (140 tests) · [CI](.github/workflows/ci.yml) green on Linux and Windows · `uv run carecircle check` (14 live checks) |
+| **Creativity and impact** | [The problem](#the-problem) · the AI-reads / code-checks / people-decide split in [How it works](#how-it-works) |
+| **Presentation** | the demo video and blog linked at the top · [Safety](#safety) · [Honest limits](#honest-limits) |
 
 ## How it works
 
@@ -152,15 +161,27 @@ Verified live: an agent outside the list wrote `@ledger add 50000 gold chain pai
    ```
 4. **One click.** Run [`templates/carecircle.template.yaml`](templates/carecircle.template.yaml) from Switch Console → Templates. It creates `@meds`, `@scribe`, `@coordinator` and both rooms.
 5. **Lock it down.** `uv run carecircle lock` sets the addressing policies (people plus the named agents only). It signs in to the gateway with `SWITCH_ADMIN_EMAIL` / `SWITCH_ADMIN_PASSWORD`, or with the admin login Switch Console generated on this computer.
-6. **Check it.** `uv run carecircle check` runs 12 checks against your live server, including a stray agent trying `@ledger add 50000…` and being refused by Switch:
+6. **Check it.** `uv run carecircle check` runs 14 checks against your live server, including a stray agent trying `@ledger add 50000…` and being refused by Switch:
    ```text
    PASS  @ledger has an addressing policy
    PASS  Switch refuses a stray agent addressing @ledger
    PASS  …and no card was opened for it
    PASS  carecircle.template.yaml passes Switch's validator — 0 errors, 0 warnings
-   12/12 checks passed
+   12/14 checks passed
    ```
 7. Post the [sample prescription](demo/samples/prescription-cardiology.png) in `#<family>-circle` and ask `@meds` to read it.
+
+**Handy commands**
+
+| Command | What it does |
+|---|---|
+| `uv run carecircle demo` | the whole story, offline, no Switch or keys |
+| `uv run carecircle check` | 14 live checks against your server |
+| `uv run carecircle who` | who has posted in the family room, and whether they count |
+| `uv run carecircle member priya <chat name>` | let a person's taps count (agents reload `circle.json` live) |
+| `uv run carecircle lock` | server-enforced who-may-address-whom policies |
+| `uv run carecircle reset --yes --family sharma2` | a clean take: new rooms and AI helpers, earlier rooms archived |
+| `scripts\start.bat` | start `@ledger` and `@pillbox` (keep the window open) |
 
 No Claude Code? [`carecircle-rooms.template.yaml`](templates/carecircle-rooms.template.yaml) sets up the rooms with only the two code agents.
 
@@ -186,12 +207,12 @@ src/carecircle/
   demo.py            the offline story
 templates/           one-click Switch templates
 demo/                synthetic, watermarked sample prescription and bill
-tests/               137 tests
+tests/               140 tests
 ```
 
 ## Built during the hackathon
 
-Everything in this repository was written from 5 to 7 November 2026, during the hackathon window, with Claude Code as a pair programmer. The git history shows the steps.
+Everything in this repository was written on 6 and 7 November 2026, inside the hackathon window (4–7 November), with Claude Code as a pair programmer. The first commit is dated 6 November; the git history shows every step.
 
 ---
 
