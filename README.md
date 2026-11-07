@@ -64,7 +64,7 @@ Every card is a **native Switch approval card**; on Discord they are real button
 git clone https://github.com/abhi-0404/carecircle && cd carecircle
 uv sync
 uv run carecircle demo     # plays the whole story with the real agent code
-uv run pytest              # 127 tests
+uv run pytest              # 137 tests
 ```
 
 `carecircle demo` runs the real `@ledger` and `@pillbox` code against an in-memory stand-in for Switch, with scripted taps and a recorded `@meds` reading of the [sample prescription](demo/samples/prescription-cardiology.png).
@@ -121,7 +121,10 @@ flowchart LR
 | **Linked rooms** | Ma's room is linked as "parent's room"; `@pillbox` finds it via `list_linked_rooms` | template `links:` · `parent_room_of` | Ma sees the family's money talk, or nothing |
 | **Templates** | One click creates 3 Claude Code agents, 2 linked rooms, docs and a kickoff | `templates/` (passes Switch's validator: 0 errors, 0 warnings) | Hand-wiring every room and agent |
 | **Messaging bridges** | Discord today; Slack, Teams, Telegram, Mattermost unchanged | Switch | Locked to one chat app |
+| **Addressing policies** | Only people and `@scribe` may address `@ledger`; only people, `@meds` and `@coordinator` may address `@pillbox`. The server refuses anyone else before the agent sees it | [`admin.py`](src/carecircle/admin.py) · `uv run carecircle lock` | A confused or hijacked AI agent could post "@ledger add 50000…" |
 | **Owner-only agent settings** | Agents can't change their own permissions (Switch answers 403) | observed on `update_agent_detail` | An agent could open itself up |
+
+Verified live: an agent outside the list wrote `@ledger add 50000 gold chain paid by abhishek`; Switch answered *"You're not permitted to direct messages to me in this room — my operator has restricted who can address me here."* and no card was ever opened.
 
 ## Safety
 
@@ -145,9 +148,9 @@ flowchart LR
    uv run carecircle register pillbox
    uv run carecircle run                # keep running
    ```
-   In Switch Console, let your family address `ledger` and `pillbox` (agent settings → addressing: anyone).
 4. **One click.** Run [`templates/carecircle.template.yaml`](templates/carecircle.template.yaml) from Switch Console → Templates. It creates `@meds`, `@scribe`, `@coordinator` and both rooms.
-5. Post the [sample prescription](demo/samples/prescription-cardiology.png) in `#<family>-circle` and ask `@meds` to read it.
+5. **Lock it down.** `uv run carecircle lock` sets the addressing policies (people plus the named agents only). It signs in to the gateway with `SWITCH_ADMIN_EMAIL` / `SWITCH_ADMIN_PASSWORD`, or with the admin login Switch Console generated on this computer.
+6. Post the [sample prescription](demo/samples/prescription-cardiology.png) in `#<family>-circle` and ask `@meds` to read it.
 
 No Claude Code? [`carecircle-rooms.template.yaml`](templates/carecircle-rooms.template.yaml) sets up the rooms with only the two code agents.
 
@@ -173,7 +176,7 @@ src/carecircle/
   demo.py            the offline story
 templates/           one-click Switch templates
 demo/                synthetic, watermarked sample prescription and bill
-tests/               127 tests
+tests/               137 tests
 ```
 
 ## Built during the hackathon

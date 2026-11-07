@@ -165,7 +165,14 @@ def main(argv: list[str] | None = None) -> None:
     run = sub.add_parser("run", help="run the registered agents")
     run.add_argument("--only", nargs="*", default=[], choices=sorted(AGENTS))
     sub.add_parser("demo", help="play the whole story offline (no Switch, no keys)")
+    lk = sub.add_parser("lock", help="let only people and the right agents address @ledger and @pillbox")
+    lk.add_argument("--unlock", action="store_true", help="open them to anyone again")
     args = p.parse_args(argv)
+    if args.cmd == "lock":
+        from carecircle.admin import lock
+
+        lock(os.environ.get("SWITCH_URL", "http://127.0.0.1:55618"), unlock=args.unlock)
+        return
     if args.cmd == "demo":
         from carecircle.demo import main as demo_main
 
