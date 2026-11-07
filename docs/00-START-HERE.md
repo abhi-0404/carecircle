@@ -10,7 +10,7 @@ Everything you need, in the order you need it. Files referenced:
 | [devto.md](devto.md) | the blog post, ready to paste into dev.to (`published: false` until you flip it) |
 | [assets/cover.png](assets/cover.png) | dev.to cover image |
 | [social.md](social.md) | X post, X thread, LinkedIn, a plain-words caption for family and friends |
-| [submission.md](submission.md) | answers for the hackathon submission form |
+| [submission.md](submission.md) | **paste-ready answers matched field by field to the real submission form** (all 12 fields, with shorter versions) |
 
 > **Time check.** Every official page I could find still says submissions close **tonight, 7 Nov, 11:59 PM IST**; I found no extension. If your inside news about an extension is right, ignore this. If not, the short route is: rehearse once (20 min) → record (60 min) → edit (45 min) → upload and publish (30 min).
 
@@ -114,7 +114,7 @@ Free tools: phone screen recorder (built in), **Win + Alt + R** (Windows Game Ba
 2. **Send me the YouTube link.** I'll put it in the README, the blog, the social posts and the submission answers, run the tests, and push to GitHub. (30 seconds of my work.)
 3. **dev.to**: Create Post → paste [devto.md](devto.md), set `published: true` → publish. Keep the `howiswitch` tag.
 4. **X and LinkedIn** from [social.md](social.md), with a 20–30 second clip.
-5. **Submit** on the WeMakeDevs hackathon page using [submission.md](submission.md).
+5. **Submit** on the WeMakeDevs form using [submission.md](submission.md); it mirrors the form's 12 fields, and you can edit the submission until the deadline, so submit once the video is up and add the blog and post links after.
 
 ---
 

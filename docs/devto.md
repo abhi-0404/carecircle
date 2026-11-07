@@ -75,7 +75,7 @@ Then I had a stray agent post `@ledger add 50000 gold chain paid by abhishek`. `
 
 **Claude Code as a room member.** `@meds`, `@scribe` and `@coordinator` are ordinary Claude Code agents, created by my template, running on my laptop. `@coordinator` asks "who takes Ma?" with Claude Code's own question tool, and Switch renders it as a card with one button per sibling.
 
-**Documents with owners.** `care-plan` is created by the template, so agents can read it but not change it: Ma's allergies stay in people's hands. `medicine-list` and `expense-ledger` are edited only by the agent that created them.
+**Documents with owners.** `care-plan` is created by the template, so agents can read it but not change it: Ma's allergies stay in people's hands. I checked: an agent that tries to edit it gets `403: Agent … did not create document …`. `medicine-list` and `expense-ledger` are edited only by the agent that created them.
 
 **Templates.** One YAML file creates the three Claude Code agents, both rooms, the link, the care plan and a welcome message. Switch's validator gives it 0 errors and 0 warnings.
 
