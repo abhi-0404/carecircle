@@ -61,6 +61,7 @@ def card(img: Image.Image, x: int, y: int, w: int, s: float) -> int:
     tap = (x + pad + bw * 0.99, cy + 58 * s)  # a fingertip ring on the button's corner, clear of the label
     d.ellipse([tap[0] - 26 * s, tap[1] - 26 * s, tap[0] + 26 * s, tap[1] + 26 * s], fill=(255, 255, 255, 70),
               outline=(255, 255, 255, 230), width=max(3, int(4 * s)))
+    d.text((x + 4, y + h + 18 * s), "Illustration of an approval card · fictional data", font=font(int(19 * s)), fill=(148, 163, 184))
     return y + h
 
 
@@ -92,11 +93,29 @@ def cover() -> Image.Image:
     return img
 
 
+def linkedin() -> Image.Image:
+    """1200x627, the size LinkedIn shows without cropping."""
+    img = gradient(1200, 627)
+    d = ImageDraw.Draw(img)
+    y = 62
+    for text, colour in (("Three siblings.", "white"), ("Three cities.", "white"), ("One Ma.", AMBER)):
+        d.text((64, y), text, font=font(68, True), fill=colour)
+        y += 88
+    d.rounded_rectangle([64, 340, 64 + 470, 340 + 56], 28, fill=(255, 255, 255, 255))
+    d.text((64 + 235, 340 + 28), "AI proposes. People decide.", font=font(29, True), fill=NAVY, anchor="mm")
+    d.text((64, 440), "CareCircle", font=font(58, True), fill=AMBER)
+    d.text((64, 512), "built on Switch · Discord · Claude", font=font(26), fill=GREY)
+    d.text((64, 560), "github.com/abhi-0404/carecircle", font=font(24), fill=GREY)
+    card(img, 660, 118, 480, 0.95)
+    return img
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     thumbnail().save(OUT / "thumbnail.png")
     cover().save(OUT / "cover.png")
-    print(f"wrote {OUT / 'thumbnail.png'} and {OUT / 'cover.png'}")
+    linkedin().save(OUT / "linkedin.png")
+    print(f"wrote thumbnail.png, cover.png and linkedin.png in {OUT}")
 
 
 if __name__ == "__main__":

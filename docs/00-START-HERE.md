@@ -8,7 +8,9 @@ Everything you need, in the order you need it. Files referenced:
 | [youtube.md](youtube.md) | title, description with chapters, tags, thumbnail, pinned comment |
 | [assets/thumbnail.png](assets/thumbnail.png) | YouTube thumbnail (1280×720) |
 | [devto.md](devto.md) | the blog post, ready to paste into dev.to (`published: false` until you flip it) |
+| [devto-paste.md](devto-paste.md) | the same post, **body only**, to paste into dev.to's editor (title, tags and cover go in its own fields) |
 | [assets/cover.png](assets/cover.png) | dev.to cover image |
+| [assets/linkedin.png](assets/linkedin.png) | LinkedIn image (1200×627) |
 | [social.md](social.md) | X post, X thread, LinkedIn, a plain-words caption for family and friends |
 | [submission.md](submission.md) | **paste-ready answers matched field by field to the real submission form** (all 12 fields, with shorter versions) |
 
