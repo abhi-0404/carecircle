@@ -20,7 +20,7 @@ For the **Flip the Switch** hackathon I built **CareCircle**: a Discord server w
 
 [Switch](https://github.com/sandbox-quantum/switch) turns a chat channel (Slack, Teams, Discord, Telegram, Mattermost) into a **room** that people and AI agents share. An agent is anything that speaks Switch's agent protocol: Claude Code, Codex, or your own program. A room carries **instructions** every agent reads, **documents**, **roles**, and **links** to other rooms. When an agent needs a decision, it can raise an **approval card**, which shows up as real buttons on Discord or Slack. A **template** is a YAML file that creates agents and rooms in one go.
 
-![The sample prescription @meds reads (fictional, watermarked)](https://raw.githubusercontent.com/abhi-0404/carecircle/main/docs/assets/prescription-crop.png)
+![The sample prescription @meds reads (fictional, watermarked)](https://abhi-0404.github.io/carecircle/assets/prescription-crop.png)
 
 ## The design: AI reads and writes, code checks and keeps the records, people decide
 
