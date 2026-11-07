@@ -2,6 +2,8 @@
 
 **Three siblings, three cities, one parent. A shared family room where AI agents do the paperwork and a sibling taps *Approve* before anything changes.**
 
+[![ci](https://github.com/abhi-0404/carecircle/actions/workflows/ci.yml/badge.svg)](https://github.com/abhi-0404/carecircle/actions/workflows/ci.yml)
+
 `Track 02 · Best Personal or Creative Workflow` · Built on [Switch](https://github.com/sandbox-quantum/switch) for the *Flip the Switch* hackathon
 
 > 🎬 **Demo video (under 3 min):** _link coming_ · 📝 **Blog:** _link coming_
