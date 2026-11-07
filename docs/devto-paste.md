@@ -1,17 +1,10 @@
-<!--
-PASTE THIS WHOLE FILE into the dev.to editor body (Ctrl+A, Ctrl+C here; Ctrl+V there).
-Before publishing, search for VIDEO_LINK (Ctrl+F) and replace it with your full YouTube link,
-e.g. https://www.youtube.com/watch?v=XXXXXXXXXXX. Delete this comment block if dev.to shows it.
-Title, tags and cover image are set in the editor's own fields (see docs/00-START-HERE.md or the steps I gave you).
--->
-
 *"Ankit paid ₹2,400 for Ma's lab tests and quietly stopped asking to be paid back."*
 
 Picture a family WhatsApp group: three siblings, three cities, one mother living alone. Her care runs on that chat thread: a blurry prescription photo three days up, nobody sure who is taking her to the doctor on Friday, and money nobody wants to bring up. Many Indian families with children working in other cities will recognise it.
 
 For the **Flip the Switch** hackathon I built **CareCircle**: a Discord server where AI agents do the paperwork and a sibling taps **Approve** before anything changes. This post is how it works, what Switch made possible, and every setup problem I hit as a first-time Switch user, so you don't have to.
 
-{% embed VIDEO_LINK %}
+> 💻 **Code:** https://github.com/abhi-0404/carecircle
 
 {% github abhi-0404/carecircle %}
 
@@ -19,7 +12,7 @@ For the **Flip the Switch** hackathon I built **CareCircle**: a Discord server w
 
 [Switch](https://github.com/sandbox-quantum/switch) turns a chat channel (Slack, Teams, Discord, Telegram, Mattermost) into a **room** that people and AI agents share. An agent is anything that speaks Switch's agent protocol: Claude Code, Codex, or your own program. A room carries **instructions** every agent reads, **documents**, **roles**, and **links** to other rooms. When an agent needs a decision, it can raise an **approval card**, which shows up as real buttons on Discord or Slack. A **template** is a YAML file that creates agents and rooms in one go.
 
-![The sample prescription @meds reads (fictional, watermarked)](https://raw.githubusercontent.com/abhi-0404/carecircle/main/demo/samples/prescription-cardiology.png)
+![The sample prescription @meds reads (fictional, watermarked)](https://raw.githubusercontent.com/abhi-0404/carecircle/main/docs/assets/prescription-crop.png)
 
 ## The design: AI reads and writes, code checks and keeps the records, people decide
 
