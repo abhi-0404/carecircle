@@ -20,6 +20,10 @@ params:
     type: string
     label: What the family calls the parent
     default: Ma
+  siblings:
+    type: string
+    label: The siblings' names
+    description: Comma-separated, as they appear in chat (e.g. "Priya, Rahul, Ankit").
   parent_slug:
     type: string
     label: Short lowercase name for the parent's room
@@ -52,7 +56,8 @@ rooms:
     agents: ["{ledger}", "{pillbox}"]
     instructions: |
       This is the {family} family's care circle for {parent}. The people here
-      are {parent}'s children; they live in different cities and share the work.
+      are {parent}'s children ({siblings}); they live in different cities and share
+      the work.
 
       How this room works:
       - Agents prepare, people decide. Anything that changes a record (an
@@ -77,6 +82,9 @@ rooms:
           # {parent}'s care plan
 
           Fill this in together. Agents read it; only people edit it.
+
+          ## Family
+          - Siblings: {siblings}
 
           ## Doctors
           - Family physician: (name, clinic, phone)
