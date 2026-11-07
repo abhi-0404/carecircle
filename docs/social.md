@@ -58,6 +58,7 @@ It runs on a laptop, 140 tests, 14 live checks, and the whole story plays offlin
 
 Video: VIDEO_LINK
 Write-up: BLOG_LINK
+Interactive replay (no install): https://abhi-0404.github.io/carecircle/
 Code: https://github.com/abhi-0404/carecircle
 
 Demo data is fictional, and CareCircle is not medical advice.
