@@ -4,7 +4,7 @@ Attach a 20–30 second clip: a sibling's phone tapping **Approve** on @pillbox'
 
 ## X (≤ 280 characters)
 
-Three siblings, three cities, one Ma. I built CareCircle on @SwitchAgents: Claude reads the prescription, plain code checks every line, and a sibling taps Approve on Discord before anything changes. Missed dose? It asks who'll call. #HowISwitch @WeMakeDevs
+Three siblings, three cities, one Ma. I built CareCircle on Switch (open source): Claude reads the prescription, plain code checks every line, and a sibling taps Approve on Discord before anything changes. Missed dose? It asks who'll call. #HowISwitch @WeMakeDevs
 
 ## LinkedIn
 
