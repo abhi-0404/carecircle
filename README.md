@@ -6,7 +6,7 @@
 
 `Track 02 · Best Personal or Creative Workflow` · Built on [Switch](https://github.com/sandbox-quantum/switch) for the *Flip the Switch* hackathon
 
-> 🎬 **Demo video (under 3 min):** _link coming_ · 📝 **Blog:** _link coming_
+> 🎬 **Demo video (under 3 min):** _link coming_ · 📝 **Blog:** _link coming_ · 🕹️ **[Interactive replay](https://abhi-0404.github.io/carecircle/)**
 
 ---
 
@@ -69,7 +69,7 @@ uv run carecircle demo     # plays the whole story with the real agent code
 uv run pytest              # 140 tests
 ```
 
-`carecircle demo` runs the real `@ledger` and `@pillbox` code against an in-memory stand-in for Switch, with scripted taps and a recorded `@meds` reading of the [sample prescription](demo/samples/prescription-cardiology.png).
+`carecircle demo` runs the real `@ledger` and `@pillbox` code against an in-memory stand-in for Switch, with scripted taps, a recorded `@meds` reading of the [sample prescription](demo/samples/prescription-cardiology.png) and a scripted `@coordinator` card (the two Claude Code agents aren't run offline). The same story is on the web as an [interactive replay](https://abhi-0404.github.io/carecircle/), clearly labelled as a recording.
 
 ## For judges
 

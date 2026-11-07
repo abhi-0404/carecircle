@@ -2,7 +2,7 @@
 
 import asyncio
 
-from carecircle.demo import story
+from carecircle.demo import events, story
 
 
 def test_offline_demo_tells_the_whole_story():
@@ -22,3 +22,12 @@ def test_offline_demo_tells_the_whole_story():
         "Priya → Ankit: ₹800",
     ]:
         assert expected in text, expected
+
+
+def test_replay_events_say_what_is_real_and_what_is_scripted():
+    ev = asyncio.run(events())
+    assert {e["t"] for e in ev} == {"scene", "say", "card", "tap", "note"}
+    cards = [e for e in ev if e["t"] == "card"]
+    assert all(c["real"] for c in cards if c["who"] in ("ledger", "pillbox"))  # produced by the real code
+    assert any(c["who"] == "coordinator" and c["real"] is False for c in cards)  # the Claude agent is scripted
+    assert all(e["real"] is False for e in ev if e["t"] == "tap")  # people's taps are scripted input

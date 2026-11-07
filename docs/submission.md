@@ -48,7 +48,7 @@ VIDEO_LINK
 Must be: **under 3 minutes**, on **YouTube or Loom**, **public or unlisted**, and for Track 2 it must **show the agent working in a real chat with your teammates**. The script in [video-script.md](video-script.md) is built for that: two friends on their phones tapping the cards in the real Discord server.
 
 ### 6. Live demo or deployment
-Leave **blank**. CareCircle runs on the family's own machine; the offline replay (`uv run carecircle demo`) isn't a hosted demo.
+CareCircle runs on the family's own machine, so there is no hosted service. **Optional:** you can paste the interactive replay page, `https://abhi-0404.github.io/carecircle/`, which is a recording of the real agents' output (labelled as such on the page). Leave the field blank if you'd rather not call a replay a live demo.
 
 ---
 
